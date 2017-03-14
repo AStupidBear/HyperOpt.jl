@@ -9,7 +9,7 @@ Hyper-parameter optimization for Julia. It includes three algorithms:
 
 ```julia
 Pkg.clone("https://github.com/AStupidBear/Utils.jl.git")
-Pkg.clone("https://github.com/AStupidBear/Perseus.jl.git")
+Pkg.clone("https://github.com/AStupidBear/HyperOpt.jl.git")
 ```
 
 ## Usage
