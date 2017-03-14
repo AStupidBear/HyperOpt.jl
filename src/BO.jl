@@ -20,7 +20,7 @@ function optimize!(opt::BayesOpt, maxevals = 1, optim = false)
   i = last_index = length(opt.y) + 1
 
   opt.X = hcat(opt.X, zeros(size(opt.X, 1), maxevals))
-  append!(opt.y, -Inf*ones(maxevals))
+  append!(opt.y, -Inf * ones(maxevals))
 
   nextidx() = (idx=i; i+=1; idx)
   @sync begin
@@ -48,7 +48,8 @@ function optimize!(opt::BayesOpt, maxevals = 1, optim = false)
             opt.model = GP(opt.X[:, 1:idx], yscale,
                         MeanConst(mean(yscale)),
                         SE(0.0, 0.0))
-            optim &&  GaussianProcesses.optimize!(opt.model)
+
+            optim && GaussianProcesses.optimize!(opt.model)
 
             if new_y > opt.ymax
               opt.ymax = new_y
@@ -88,8 +89,7 @@ function expected_improvement(model, ymax)
   return ei
 end
 
-function optimize(f::Function, bounds, c0 = [];
-                  name = "", maxevals = 100, optim = false)
+function optimize(f::Function, bounds, c0 = []; name = "", maxevals = 100, optim = false)
   encoder = BoundEncoder(bounds)
   X = zeros(length(encoder.bounds), 1)
   y = zeros(1)

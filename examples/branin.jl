@@ -1,4 +1,4 @@
-using Utils; reload("BO")
+using Utils, HyperOpt
 
 bounds = [(0, 1) for i in 1:2]; c0 = [0.5, 0.5]
 BO.minimize(branin, bounds, c0; optim = true, maxevals = 20)

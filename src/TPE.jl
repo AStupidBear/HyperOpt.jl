@@ -28,17 +28,13 @@ lognormal = hp[:lognormal]; export lognormal
 qlognormal = hp[:qlognormal]; export qlognormal
 
 losses(trials) = trials[:losses](); export losses
-export valswithlosses
 function valswithlosses(trials)
 	ts = trials[:trials];
 	[(ts[i]["misc"]["vals"], ts[i]["result"]["loss"]) for i=1:length(ts)]
 end
 
-export results
 results(trials, name) = [res[name] for res in trials["results"]]
-# export best_trial
 best_trial(trials) = findmin(losses(trials))[2]
-export best_result
 best_result(trials) = (id = best_trial(trials); trials["results"][id])
 progress(trials) = minimums(losses(trials))
 
@@ -47,19 +43,18 @@ setspace(id, b::Range) =  quniform("$id", extrema(b)..., step(b))
 setspace(id, b::NTuple{2, Real}) = uniform("$id", extrema(b)...)
 setspace(id, b::Vector) = choice("$id", b)
 
-export optimize
-function optimize(f::Function, bounds...; maxevals = 1)
+function optimize(f::Function, bounds; maxevals = 1)
   space=[setspace(i, b) for (i,b) in enumerate(bounds)]
-  fmin(f; space = space, maxevals = maxevals)
+  fmin(f; space = space, max_evals = maxevals)
 end
+minimize(f::Function, bounds; o...) = optimize(f, bounds; o...)
+maximize(f::Function, bounds; o...) = optimize(x -> -f(x), bounds; o...)
 
-
-export fmin
 function fmin(args...; kwargs...)
   trials = Trials()
   space = hopt[:fmin](args...; kwargs..., algo = TPESUGGEST, trials = trials)
-  param = [space["$i"] for i in 1:length(space)]
-  param, trials
+  cmin = [space["$i"] for i in 1:length(space)]
+  cmin, trials
 end
 
 end # module

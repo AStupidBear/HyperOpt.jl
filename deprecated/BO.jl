@@ -1,7 +1,7 @@
 
 # addprocs(3)
 # using Utils
-# reload("BO"); reload("Hyperopt")
+# reload("BO"); reload("TPE")
 #
 # @everywhere function branin(v)
 #     x, y = v
@@ -15,15 +15,15 @@
 #   for t in 1:restarts
 #     bounds = [0:1e-2:1 for _ in 1:dim]
 #     xmax, ymax, opt = BO.optimize(x->-branin(x), bounds...;
-#                                   optim = true, iter = maxevals)
+#                                   opt = true, iter = maxevals)
 #     loss1[:, t] = -BO.progress(opt)
 #
-#     param, trials = Hyperopt.optimize(branin, bounds...; maxevals = maxevals)
-#     loss2[:, t] = Hyperopt.progress(trials)
+#     param, trials = TPE.optimize(branin, bounds...; maxevals = maxevals)
+#     loss2[:, t] = TPE.progress(trials)
 #   end
 #   loss1 = median(loss1, 2);  loss2 = median(loss2, 2)
 #
-#   Main.plot([loss1 loss2])#label = ["BayesOpt", "Hyperopt"])
+#   Main.plot([loss1 loss2])#label = ["BayesOpt", "TPE"])
 # end
 #
 # @time p = benchmark(; maxevals = 20, restarts = 1) |> gui
@@ -130,7 +130,7 @@ Returns:
 - `Array{Real}(nparams, 1)`: the best params found for `f`
 - `Real`: the best result found.
 """
-function optimize!(opt::BayesOpt, iter=10; noise=-1e8, optim=true)
+function optimize!(opt::BayesOpt, iter=10; noise=-1e8, opt=true)
   np = nprocs() # determine the number of processes available
   i = last_index = length(opt.y) + 1
 
@@ -167,7 +167,7 @@ function optimize!(opt::BayesOpt, iter=10; noise=-1e8, optim=true)
             # Just rebuild the model cause apparently the above complains if we update with more data.
 
             opt.model = GP(opt.X[:,1:idx], opt.y[1:idx], MeanConst(mean(opt.y[1:idx])), SE(0.0, 0.0), noise)
-            optim && GaussianProcesses.optimize!(opt.model)
+            opt && GaussianProcesses.optimize!(opt.model)
 
             # Update the max x and y if our new
             # result is better.

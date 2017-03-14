@@ -1,6 +1,7 @@
 # R, η = 27, 3
 # smax = log(R) / log(η)
 # B = (smax + 1) * R
+
 module Hyperband
 
 using Utils
