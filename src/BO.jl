@@ -5,7 +5,6 @@ using Utils, Distributions, GaussianProcesses, BlackBoxOptim
 srand(100)
 
 type BayesOpt
-    name::String
     f::Function
     X::Array{Float64, 2}
     y::Array{Float64, 1}
@@ -31,15 +30,14 @@ function optimize!(opt::BayesOpt, maxevals = 1, optim = false)
             idx = nextidx()
             idx > last_index + maxevals - 1 && break
 
-            debug("iteration=$i, x=$(opt.xmax), y=$(opt.ymax)")
-
             new_x = idx < np ? [rand(b) for b in opt.encoder.bounds] :
                             acquire_max(opt.model, opt.encoder.bounds)
             new_x = purturb(new_x, opt.X[:, 1:idx], opt.encoder.bounds)
             new_c = transform(opt.encoder, new_x)
             new_y = remotecall_fetch(opt.f, p, new_c)
 
-            debug("new x=$new_x, y=$new_y")
+            debug("\nnew x = $new_x, y = $new_y")
+            debug("\niteration = $i, x_max = $(opt.xmax), ymax = $(opt.ymax)")
 
             opt.X[:, idx] = new_x
             opt.y[idx] = new_y
@@ -61,7 +59,7 @@ function optimize!(opt::BayesOpt, maxevals = 1, optim = false)
       end
     end
   end
-  info("Optimization completed: x=$(opt.xmax), y=$(opt.ymax)")
+  info("\nOptimization completed:\n xmax = $(opt.xmax), ymax = $(opt.ymax)")
   return opt.xmax, opt.ymax
 end
 
@@ -89,7 +87,7 @@ function expected_improvement(model, ymax)
   return ei
 end
 
-function optimize(f::Function, bounds, c0 = []; name = "", maxevals = 100, optim = false)
+function optimize(f::Function, bounds, c0 = []; maxevals = 100, optim = false)
   encoder = BoundEncoder(bounds)
   X = zeros(length(encoder.bounds), 1)
   y = zeros(1)
@@ -101,7 +99,7 @@ function optimize(f::Function, bounds, c0 = []; name = "", maxevals = 100, optim
   ymax = f(cmax)
   X[:, 1] = xmax; y[1] = ymax
 
-  opt = BayesOpt(name, f, X, y, xmax, ymax, encoder,
+  opt = BayesOpt(f, X, y, xmax, ymax, encoder,
           GP(X[:, 1:1], [0.0], MeanZero(), SE(0.0, 0.0)))
 
   optimize!(opt, maxevals - 1, optim)
@@ -120,11 +118,11 @@ function minimize(f, args...; kwargs...)
 end
 
 function report(opt::BayesOpt)
-  if isdefined(Main, :Plots)
-    p = Main.plot(progress(opt))
-    name = opt.name * "_BayesOpt"
-    Main.savefig(p, tempfile(name))
-  end
+  # if isdefined(Main, :Plots)
+  #   p = Main.plot(progress(opt))
+  #   name = opt.name * "_BayesOpt"
+  #   Main.savefig(p, timename(name))
+  # end
 end
 
 end # module

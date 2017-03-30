@@ -8,8 +8,8 @@ Hyper-parameter optimization for Julia. It includes three algorithms:
 ## Installation
 
 ```julia
-Pkg.clone("https://github.com/AStupidBear/Utils.jl.git")
 Pkg.clone("https://github.com/AStupidBear/HyperOpt.jl.git")
+Pkg.build("HyperOpt")
 ```
 
 ## Usage
