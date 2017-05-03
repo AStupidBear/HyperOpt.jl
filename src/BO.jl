@@ -1,6 +1,6 @@
 module BO
 
-using Utils, Distributions, GaussianProcesses, BlackBoxOptim
+using Utils, Distributions, GaussianProcesses, BlackBoxOptim, Logging
 
 srand(100)
 
@@ -74,7 +74,7 @@ end
 
 function expected_improvement(model, ymax)
   function ei(x)
-    mean, var = predict(model, reshape(x, length(x), 1))
+    mean, var = GaussianProcesses.predict(model, reshape(x, length(x), 1))
     if var == 0
       return 0
     else

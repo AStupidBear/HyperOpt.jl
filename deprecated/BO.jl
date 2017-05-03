@@ -148,7 +148,7 @@ function optimize!(opt::BayesOpt, iter=10; noise=-1e8, opt=true)
             if idx > last_index + iter - 1
               break
             end
-            Logging.debug("iteration=$i, x=$(opt.xmax), y=$(opt.ymax)")
+            debug("iteration=$i, x=$(opt.xmax), y=$(opt.ymax)")
 
             # Select the next params
             new_x = acquire_max(opt.model, opt.ymax, opt.bounds)
@@ -159,7 +159,7 @@ function optimize!(opt::BayesOpt, iter=10; noise=-1e8, opt=true)
 
             new_y = remotecall_fetch(opt.f, p, new_x)
 
-            Logging.debug("new x=$new_x, y=$new_y")
+            debug("new x=$new_x, y=$new_y")
 
             # update X and y with next params and run
             opt.X[:,idx] = new_x
@@ -180,7 +180,7 @@ function optimize!(opt::BayesOpt, iter=10; noise=-1e8, opt=true)
       end
     end
   end
-  Logging.info("Optimization completed: x=$(opt.xmax), y=$(opt.ymax)")
+  info("Optimization completed: x=$(opt.xmax), y=$(opt.ymax)")
 
   # return our best parameters and result respectively.
   return opt.xmax, opt.ymax
@@ -304,7 +304,7 @@ end # module
 #
 #     # Begin our optimization loop
 #     for i in last_index:length(opt.y)
-#         Logging.debug("iteration=$i, x=$(opt.xmax), y=$(opt.ymax)")
+#         debug("iteration=$i, x=$(opt.xmax), y=$(opt.ymax)")
 #
 #         # Select the next params
 #         new_x = acquire_max(opt.model, opt.ymax, opt.bounds)
@@ -312,7 +312,7 @@ end # module
 #         # Run the next params
 #         new_y = opt.f(new_x)
 #
-#         Logging.debug("new x=$new_x, y=$new_y")
+#         debug("new x=$new_x, y=$new_y")
 #
 #         # update X and y with next params and run
 #         opt.X[:,i] = new_x
@@ -337,7 +337,7 @@ end # module
 #         end
 #     end
 #
-#     Logging.info("Optimization completed: x=$(opt.xmax), y=$(opt.ymax)")
+#     info("Optimization completed: x=$(opt.xmax), y=$(opt.ymax)")
 #
 #     # return our best parameters and result respectively.
 #     return opt.xmax, opt.ymax

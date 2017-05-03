@@ -4,7 +4,7 @@
 
 module Hyperband
 
-using Utils
+using Utils, Logging
 
 function budget(maxresource, reduction = 3)
   smax = floor(Int, log(maxresource) / log(reduction))
