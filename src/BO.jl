@@ -45,7 +45,7 @@ function optimize!(opt::BayesOpt, maxevals = 1, optim = false)
             yscale = centralize(opt.y[1:idx])
             opt.model = GP(opt.X[:, 1:idx], yscale,
                         MeanConst(mean(yscale)),
-                        SE(0.0, 0.0))
+                        SE(0.0, 0.0), -5.0)
 
             optim && GaussianProcesses.optimize!(opt.model)
 
@@ -100,7 +100,7 @@ function optimize(f::Function, bounds, c0 = []; maxevals = 100, optim = false)
   X[:, 1] = xmax; y[1] = ymax
 
   opt = BayesOpt(f, X, y, xmax, ymax, encoder,
-          GP(X[:, 1:1], [0.0], MeanZero(), SE(0.0, 0.0)))
+          GP(X[:, 1:1], [0.0], MeanZero(), SE(0.0, 0.0), -5.0))
 
   optimize!(opt, maxevals - 1, optim)
   cmax = transform(opt.encoder, opt.xmax)
