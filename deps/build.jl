@@ -1,6 +1,7 @@
-if !isdir(Pkg.dir("Utils"))
-  Pkg.clone("https://github.com/AStupidBear/Utils.jl.git")
-  Pkg.build("Utils")
+for pkg in ["Utils"]
+    Pkg.installed(pkg) !== nothing && (Pkg.checkout(pkg); continue)
+    Pkg.clone("https://github.com/AStupidBear/$pkg.jl.git")
+    Pkg.build(pkg)
 end
 
-run(`pip install hyperopt`)
+# run(`pip install hyperopt`)
